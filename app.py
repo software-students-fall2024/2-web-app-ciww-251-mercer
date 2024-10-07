@@ -14,9 +14,12 @@ if connstr is None:
 
 db = MongoClient(connstr)
 
+
 @app.route("/")
+@login_required
 def index():
     return render_template('index.html')
+
 
 @app.route("/add_task")
 def add_task():
