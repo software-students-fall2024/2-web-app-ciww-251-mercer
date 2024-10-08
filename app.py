@@ -1,18 +1,49 @@
 from flask import Flask, render_template
-from flask.app import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
+from os import getenv
+from hashlib import sha256
 
 load_dotenv()
 
 app = Flask(__name__)
 
-connstr = os.getenv("DB_URI")
+connstr = getenv("DB_URI")
 
 if connstr is None:
     raise Exception("Database URI could not be loaded. Check .env file.")
 
 db = MongoClient(connstr)
+
+class TaskSchema:
+    def __init__(self, title, description=None, due_date=None, completed=False):
+        self.title = title
+        self.description = description
+        self.due_date = due_date
+        self.completed = completed
+
+    def to_dict(self):
+        return {
+            'title': self.title,
+            'description': self.description,
+            'due_date': self.due_date,
+            'completed': self.completed
+        }
+
+
+class UserSchema:
+    def __init__(self, username, password):
+        self.username = username
+        self.password_hash = self.hash_password(password)
+
+    def hash_password(self, password):
+        return sha256(password.encode()).hexdigest()
+
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'password_hash': self.password_hash
+        }
 
 
 @app.route("/")
