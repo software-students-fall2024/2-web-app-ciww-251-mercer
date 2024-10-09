@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-from flask import Flask, render_template, request, redirect
-from datetime import datetime
 from flask import Flask, render_template
->>>>>>> 235c17023424e7dbdd9a9d941a88607c5a777a96
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from os import getenv
@@ -18,13 +14,6 @@ connstr = getenv("DB_URI")
 if connstr is None:
     raise Exception("Database URI could not be loaded. Check .env file.")
 
-<<<<<<< HEAD
-client = MongoClient(connstr)
-database = client.TODO
-users = database.users
-tasks = database.tasks
-
-=======
 db = MongoClient(connstr)
 collection = db['TODO']['users']
 
@@ -39,7 +28,6 @@ task document
     completed: boolean
 }
 '''
->>>>>>> 235c17023424e7dbdd9a9d941a88607c5a777a96
 class TaskSchema:
     def __init__(self, title, description=None, due_date=None, completed=False):
         self._id = ObjectId()
@@ -113,13 +101,13 @@ class UserSchema:
         )
 
     def get_tasks(self):
-        user = users.find_one({'username': self.username})
+        user = collection.find_one({'username': self.username})
         if not user:
             raise Exception("user does not exist")
         return user.get('tasks', [])
 
     def delete_task(self, task_id):
-        deleted = users.update_one(
+        deleted = collection.update_one(
             {'username': self.username},
             {'$pull': {'tasks': {'id': task_id}}}
         )
@@ -127,7 +115,7 @@ class UserSchema:
             raise Exception("task does not exist")
 
     def update_task(self, task_id, updated):
-        update = users.update_one(
+        update = collection.update_one(
             {'username': self.username, 'tasks.id': task_id},
             {'$set': {'tasks.$': updated.to_dict()}}
         )
