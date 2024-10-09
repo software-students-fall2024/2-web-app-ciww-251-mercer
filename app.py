@@ -1,6 +1,5 @@
 <<<<<<< HEAD
 from flask import Flask, render_template, request, redirect
-=======
 from datetime import datetime
 from flask import Flask, render_template
 >>>>>>> 235c17023424e7dbdd9a9d941a88607c5a777a96
@@ -114,13 +113,27 @@ class UserSchema:
         )
 
     def get_tasks(self):
-        pass
+        user = users.find_one({'username': self.username})
+        if not user:
+            raise Exception("user does not exist")
+        return user.get('tasks', [])
 
     def delete_task(self, task_id):
-        pass
+        deleted = users.update_one(
+            {'username': self.username},
+            {'$pull': {'tasks': {'id': task_id}}}
+        )
+        if deleted.modified_count == 0:
+            raise Exception("task does not exist")
 
-    def update_task(self): #idk what args you want here
-        pass
+    def update_task(self, task_id, updated):
+        update = users.update_one(
+            {'username': self.username, 'tasks.id': task_id},
+            {'$set': {'tasks.$': updated.to_dict()}}
+        )
+
+        if update.modified_count == 0:
+            raise Exception("task does not exist")
 
 
 @app.route("/")
@@ -129,32 +142,32 @@ def index():
     return render_template('index.html')
 
 
-@app.route("/add_task", methods=['GET'])
-def add_task_form():
-    return render_template("add_task.html")
+# @app.route("/add_task", methods=['GET'])
+# def add_task_form():
+#     return render_template("add_task.html")
 
-@app.route('/add_task', methods=['POST'])
-def add_task():
-    taskname = request.form.get('taskname')
-    description = request.form.get('description')
-    due_date = request.form.get('due_date')
-    done = request.form.get('done') == 'on'
-
-    #print(f"Task Name: {taskname}, Description: {description}, Due Date: {due_date}, Done: {done}")
-
-    task = {
-        'title': taskname,
-        'completed': done
-    }
-
-    if description:
-        task['description'] = description
-    if due_date:
-        task['due_date'] = due_date
-
-    tasks.insert_one(task)
-
-    return redirect('/')
+# @app.route('/add_task', methods=['POST'])
+# def add_task():
+#     taskname = request.form.get('taskname')
+#     description = request.form.get('description')
+#     due_date = request.form.get('due_date')
+#     done = request.form.get('done') == 'on'
+#
+#     #print(f"Task Name: {taskname}, Description: {description}, Due Date: {due_date}, Done: {done}")
+#
+#     task = {
+#         'title': taskname,
+#         'completed': done
+#     }
+#
+#     if description:
+#         task['description'] = description
+#     if due_date:
+#         task['due_date'] = due_date
+#
+#     tasks.insert_one(task)
+#
+#     return redirect('/')
 
 
 # @app.route("/edit_task")
