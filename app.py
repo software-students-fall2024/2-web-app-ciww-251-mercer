@@ -17,7 +17,6 @@ if connstr is None:
 db = MongoClient(connstr)
 collection = db['TODO']['users']
 
-
 '''
 task document
 {
@@ -130,9 +129,9 @@ def index():
     return render_template('index.html')
 
 
-# @app.route("/add_task", methods=['GET'])
-# def add_task_form():
-#     return render_template("add_task.html")
+@app.route("/add_task", methods=['GET'])
+def add_task_form():
+    return render_template("add_task.html")
 
 # @app.route('/add_task', methods=['POST'])
 # def add_task():
