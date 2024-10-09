@@ -1,9 +1,16 @@
 <h1>Add a Task!</h1>
 <form action="/add_task" method="POST">
     <label for="taskname">Task: </label>
-    <input type="text" id="taskname" name="taskname">
+    <input type="text" id="taskname" name="taskname" required>
+
+    <label for="description">Description: </label>
+    <textarea id="description" name="description"></textarea><br>
+
+    <label for="due_date">Due Date: </label>
+    <input type="date" id="due_date" name="due_date"><br>
+
     <label for="done">Is it done:</label>
-    <input type="checkbox" id="done" name="done">
+    <input type="checkbox" id="done" name="done"><br>
 
     <button type="submit">Add to your todo list</button>
 </form>

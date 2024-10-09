@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from os import getenv
@@ -13,7 +13,10 @@ connstr = getenv("DB_URI")
 if connstr is None:
     raise Exception("Database URI could not be loaded. Check .env file.")
 
-db = MongoClient(connstr)
+client = MongoClient(connstr)
+database = client.TODO
+users = database.users
+tasks = database.tasks
 
 class TaskSchema:
     def __init__(self, title, description=None, due_date=None, completed=False):
@@ -52,9 +55,33 @@ def index():
     return render_template('index.html')
 
 
-@app.route("/add_task")
-def add_task():
+@app.route("/add_task", methods=['GET'])
+def add_task_form():
     return render_template("add_task.html")
+
+@app.route('/add_task', methods=['POST'])
+def add_task():
+    taskname = request.form.get('taskname')
+    description = request.form.get('description')
+    due_date = request.form.get('due_date')
+    done = request.form.get('done') == 'on'
+
+    #print(f"Task Name: {taskname}, Description: {description}, Due Date: {due_date}, Done: {done}")
+
+    task = {
+        'title': taskname,
+        'completed': done
+    }
+
+    if description:
+        task['description'] = description
+    if due_date:
+        task['due_date'] = due_date
+
+    tasks.insert_one(task)
+
+    return redirect('/')
+
 
 # @app.route("/edit_task")
 # def edit_task():
