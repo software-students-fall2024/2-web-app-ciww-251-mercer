@@ -27,6 +27,8 @@ task document
     completed: boolean
 }
 '''
+
+
 class TaskSchema:
     def __init__(self, title, description=None, due_date=None, completed=False):
         self._id = ObjectId()
@@ -43,6 +45,8 @@ class TaskSchema:
             'due_date': self.due_date,
             'completed': self.completed
         }
+
+
 '''
 user document
 {
@@ -51,8 +55,10 @@ user document
     tasks: Task[]
 }
 '''
+
+
 class UserSchema:
-    def __init__(self, username, password = None):
+    def __init__(self, username, password=None):
         self.username = username
         self.password_hash = self.hash_password(password) if password else ""
         self.tasks = []
@@ -66,7 +72,7 @@ class UserSchema:
             'password_hash': self.password_hash,
             'tasks': self.tasks
         }
-    
+
     @staticmethod
     def get_user(username):
         user = collection.find_one({'username': username})
@@ -89,14 +95,14 @@ class UserSchema:
         user = collection.find_one({'username': self.username})
         if user is not None:
             raise Exception("username already exists")
-        
+
         collection.insert_one(self.to_dict())
-    
+
     def add_task(self, task):
         self.tasks.append(task)
         collection.update_one(
             {'username': self.username},
-            {'$push':{'tasks': task.to_dict()}}
+            {'$push': {'tasks': task.to_dict()}}
         )
 
     def get_tasks(self):
@@ -124,14 +130,30 @@ class UserSchema:
 
 
 @app.route("/")
-#@login_required
+# @login_required
 def index():
     return render_template('index.html')
 
 
 @app.route("/add_task", methods=['GET'])
-def add_task_form():
+def add_task():
     return render_template("add_task.html")
+
+
+@app.route("/edit_task")
+def edit_task():
+    return render_template("edit_task.html")
+
+
+@app.route("/list_tasks")
+def list_tasks():
+    return render_template("list_tasks.html")
+
+
+@app.route("/search_task")
+def search_task():
+    return render_template("search_task.html")
+
 
 # @app.route('/add_task', methods=['POST'])
 # def add_task():
@@ -155,16 +177,3 @@ def add_task_form():
 #     tasks.insert_one(task)
 #
 #     return redirect('/')
-
-
-# @app.route("/edit_task")
-# def edit_task():
-#     return render_template("edit_task.html")
-#
-# @app.route("/list_tasks")
-# def list_tasks():
-#     return render_template("list_tasks.html")
-#
-# @app.route("/search_task")
-# def search_task():
-#     return render_template("search_task.html")
