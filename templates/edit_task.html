@@ -16,7 +16,7 @@
                 <label for="title">Task Title</label>
                 <input type="text" name="title" id="title" value="{{ task['title'] }}" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="description">Task Description</label>
                 <textarea name="description" id="description">{{ task['description'] }}</textarea>
@@ -38,6 +38,10 @@
             </div>
         </form>
     </div>
+    <div class="button-container">
+        <a href="{{ url_for('index') }}" class="button">Go to Home</a>
+    </div>
+
 </body>
 
 </html>
