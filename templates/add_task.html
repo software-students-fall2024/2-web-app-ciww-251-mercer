@@ -1,16 +1,37 @@
-<h1>Add a Task!</h1>
-<form action="/add_task" method="POST">
-    <label for="taskname">Task: </label>
-    <input type="text" id="taskname" name="taskname" required>
+<!DOCTYPE html>
+<html lang="en">
 
-    <label for="description">Description: </label>
-    <textarea id="description" name="description"></textarea><br>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Task</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
 
-    <label for="due_date">Due Date: </label>
-    <input type="date" id="due_date" name="due_date"><br>
+<body>
+    <div class="container">
+        <h1>Add Task</h1>
 
-    <label for="done">Is it done:</label>
-    <input type="checkbox" id="done" name="done"><br>
+        <form action="{{ url_for('add_task') }}" method="POST">
+            <label for="title">Task:</label>
+            <input type="text" id="title" name="title" required>
 
-    <button type="submit">Add to your todo list</button>
-</form>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+
+            <label for="due_date">Due Date:</label>
+            <input type="date" id="due_date" name="due_date">
+
+            <label for="completed">Completed?:</label>
+            <input type="checkbox" id="completed" name="completed">
+
+            <button type="submit">Add Task</button>
+        </form>
+    </div>
+    <div class="button-container">
+        <a href="{{ url_for('index') }}" class="button">Go to Home</a>
+    </div>
+
+</body>
+
+</html>
