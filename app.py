@@ -133,6 +133,7 @@ def index():
 def add_task_form():
     return render_template("add_task.html")
 
+
 # @app.route('/add_task', methods=['POST'])
 # def add_task():
 #     taskname = request.form.get('taskname')
