@@ -2,35 +2,35 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Task</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Task</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="container">
-        <h1>Add Task</h1>
+  <div class="container">
+    <h1>Add Task</h1>
 
-        <form action="{{ url_for('add_task') }}" method="POST">
-            <label for="title">Task:</label>
-            <input type="text" id="title" name="title" required>
+    <form action="{{ url_for('add_task') }}" method="POST">
+      <label for="title">Task:</label>
+      <input type="text" id="title" name="title" required>
 
-            <label for="description">Description:</label>
-            <textarea id="description" name="description"></textarea>
+      <label for="description">Description:</label>
+      <textarea id="description" name="description"></textarea>
 
-            <label for="due_date">Due Date:</label>
-            <input type="date" id="due_date" name="due_date">
+      <label for="due_date">Due Date:</label>
+      <input type="date" id="due_date" name="due_date">
 
-            <label for="completed">Completed?:</label>
-            <input type="checkbox" id="completed" name="completed">
+      <label for="completed">Completed?:</label>
+      <input type="checkbox" id="completed" name="completed">
 
-            <button type="submit">Add Task</button>
-        </form>
-    </div>
-    <div class="button-container">
-        <a href="{{ url_for('index') }}" class="button">Go to Home</a>
-    </div>
+      <button type="submit">Add Task</button>
+    </form>
+  </div>
+  <div class="button-container">
+    <a href="{{ url_for('index') }}" class="button">Go to Home</a>
+  </div>
 
 </body>
 

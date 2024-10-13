@@ -1,20 +1,32 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
+from flask_login import LoginManager, UserMixin, login_required, login_user
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from os import getenv
 from hashlib import sha256
-from bson import ObjectId
+from bson import ObjectId 
 
 load_dotenv()
 
-app = Flask(__name__)
-
 connstr = getenv("DB_URI")
+key = getenv("SECRET")
 
 if connstr is None:
-    raise Exception("Database URI could not be loaded. Check .env file.")
+    raise Exception("Database URI could not be loaded: check .env file")
+
+if key is None:
+    raise Exception("Flask secret could nto be loaded: check .env file")
+
+app = Flask(__name__)
+app.secret_key = key
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
 
 db = MongoClient(connstr)
+
 collection = db['TODO']['users']
 
 '''
@@ -57,11 +69,12 @@ user document
 '''
 
 
-class UserSchema:
+class UserSchema(UserMixin):
     def __init__(self, username, password=None):
         self.username = username
         self.password_hash = self.hash_password(password) if password else ""
         self.tasks = []
+        self.id = None
 
     def hash_password(self, password):
         return sha256(password.encode()).hexdigest()
@@ -82,6 +95,7 @@ class UserSchema:
         record = UserSchema(user['username'])
         record.password_hash = user['password_hash']
         record.tasks = user['tasks']
+        record.id = str(user['_id'])
         return record
 
     def authenticate(self):
@@ -90,13 +104,13 @@ class UserSchema:
             raise Exception("user does not exist")
         if self.password_hash != user['password_hash']:
             raise Exception("password is incorrect")
+        self.id = str(user._id)
 
     def insert_record(self):
         user = collection.find_one({'username': self.username})
         if user is not None:
             raise Exception("username already exists")
-
-        collection.insert_one(self.to_dict())
+        user = collection.insert_one(self.to_dict())
 
     def add_task(self, task):
         self.tasks.append(task)
@@ -129,6 +143,47 @@ class UserSchema:
             raise Exception("task does not exist")
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    user = collection.find_one({'_id': ObjectId(user_id)})
+    if not user:
+        return None
+    return UserSchema.get_user(user['username'])
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        return render_template('register.html')
+
+    username = request.form['username']
+    password = request.form['password']
+
+    try:
+        new_user = UserSchema(username, password)
+        new_user.insert_record()
+        return redirect(url_for('login'))
+    except Exception as e:
+        return str(e)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+
+    username = request.form['username']
+    password = request.form['password']
+    user = UserSchema.get_user(username)
+    if user:
+        if user.hash_password(password) == user.password_hash:
+            login_user(user)  # Log the user in
+            return redirect(url_for('list_tasks'))
+        else:
+            return "Invalid password"
+    return "Invalid username"
+
+
 @app.route("/")
 # @login_required
 def index():
@@ -138,6 +193,7 @@ def index():
 @app.route("/add_task", methods=['GET'])
 def add_task():
     return render_template("add_task.html")
+
 
 @app.route("/add_task", methods=['POST'])
 def add_task_post():
@@ -171,6 +227,7 @@ def edit_task():
 
 
 @app.route("/list_tasks")
+@login_required
 def list_tasks():
     return render_template("list_tasks.html")
 
@@ -178,26 +235,3 @@ def list_tasks():
 @app.route("/search_task")
 def search_task():
     return render_template("search_task.html")
-
-# @app.route('/add_task', methods=['POST'])
-# def add_task():
-#     taskname = request.form.get('taskname')
-#     description = request.form.get('description')
-#     due_date = request.form.get('due_date')
-#     done = request.form.get('done') == 'on'
-#
-#     #print(f"Task Name: {taskname}, Description: {description}, Due Date: {due_date}, Done: {done}")
-#
-#     task = {
-#         'title': taskname,
-#         'completed': done
-#     }
-#
-#     if description:
-#         task['description'] = description
-#     if due_date:
-#         task['due_date'] = due_date
-#
-#     tasks.insert_one(task)
-#
-#     return redirect('/')

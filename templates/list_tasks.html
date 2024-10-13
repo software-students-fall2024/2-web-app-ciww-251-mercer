@@ -2,45 +2,45 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List of Tasks</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List of Tasks</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="container">
-        <h1>Tasks</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Due Date</th>
-                    <th>Completed</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in tasks %}
-                <tr>s
-                    <td>{{ task['title'] }}</td>
-                    <td>{{ task['description'] or 'No description' }}</td>
-                    <td>{{ task['due_date'] or 'No due date' }}</td>
-                    <td>{{ 'Yes' if task['completed'] else 'No' }}</td>
-                    <td>
-                        <a href="{{ url_for('edit_task', task_id=task['_id']) }}" class="button">Edit</a>
-                        <a href="{{ url_for('delete_task', task_id=task['_id']) }}" class="button">Delete</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+  <div class="container">
+    <h1>Tasks</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Due Date</th>
+          <th>Completed</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in tasks %}
+        <tr>s
+          <td>{{ task['title'] }}</td>
+          <td>{{ task['description'] or 'No description' }}</td>
+          <td>{{ task['due_date'] or 'No due date' }}</td>
+          <td>{{ 'Yes' if task['completed'] else 'No' }}</td>
+          <td>
+            <a href="{{ url_for('edit_task', task_id=task['_id']) }}" class="button">Edit</a>
+            <a href="{{ url_for('delete_task', task_id=task['_id']) }}" class="button">Delete</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
-        <div class="button-container">
-            <a href="{{ url_for('index') }}" class="button">Go to Home</a>
-        </div>
+    <div class="button-container">
+      <a href="{{ url_for('index') }}" class="button">Go to Home</a>
     </div>
+  </div>
 </body>
 
 </html>
