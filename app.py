@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from os import getenv
@@ -77,7 +77,7 @@ class UserSchema:
     def get_user(username):
         user = collection.find_one({'username': username})
         if not user:
-            raise Exception("user does not exist")
+            return None
 
         record = UserSchema(user['username'])
         record.password_hash = user['password_hash']
@@ -138,6 +138,32 @@ def index():
 @app.route("/add_task", methods=['GET'])
 def add_task():
     return render_template("add_task.html")
+
+@app.route("/add_task", methods=['POST'])
+def add_task_post():
+    #HARDCODED USER FOR NOW
+    username = 'test_user'
+    user_2 = UserSchema.get_user(username)
+    if user_2 is None:
+        user_2 = UserSchema(username)
+        user_2.insert_record()
+
+    taskname = request.form.get('taskname')
+    description = request.form.get('description')
+    due_date = request.form.get('due_date')
+    completed = request.form.get('completed') == 'on'
+
+    task_1 = TaskSchema(title=taskname, description=description, due_date=due_date, completed=completed)
+
+    user_2 = UserSchema.get_user('test_user')
+
+    try:
+        user_2.add_task(task_1)
+    except Exception as exc:
+        raise exc
+
+    return redirect('/add_task')
+
 
 @app.route("/edit_task")
 def edit_task():
