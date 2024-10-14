@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask_login import LoginManager, UserMixin, login_required, login_user
+from flask import Flask, render_template, request, redirect, url_for, session
+from flask_login import LoginManager, UserMixin, login_required, login_user, current_user
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from os import getenv
@@ -128,14 +128,14 @@ class UserSchema(UserMixin):
     def delete_task(self, task_id):
         deleted = collection.update_one(
             {'username': self.username},
-            {'$pull': {'tasks': {'id': task_id}}}
+            {'$pull': {'tasks': {'_id': task_id}}}  # Corrected from 'id' to '_id'
         )
         if deleted.modified_count == 0:
             raise Exception("task does not exist")
 
     def update_task(self, task_id, updated):
         update = collection.update_one(
-            {'username': self.username, 'tasks.id': task_id},
+            {'username': self.username, 'tasks._id': str(task_id)},
             {'$set': {'tasks.$': updated.to_dict()}}
         )
 
@@ -177,6 +177,7 @@ def login():
     user = UserSchema.get_user(username)
     if user:
         if user.hash_password(password) == user.password_hash:
+            session['username'] = username
             login_user(user)  # Log the user in
             return redirect(url_for('list_tasks'))
         else:
@@ -185,9 +186,12 @@ def login():
 
 
 @app.route("/")
-# @login_required
+def home():
+    return render_template('login.html')
+@app.route("/index")
 def index():
     return render_template('index.html')
+
 
 
 @app.route("/add_task", methods=['GET'])
@@ -197,41 +201,77 @@ def add_task():
 
 @app.route("/add_task", methods=['POST'])
 def add_task_post():
-    #HARDCODED USER FOR NOW
-    username = 'test_user'
-    user_2 = UserSchema.get_user(username)
-    if user_2 is None:
-        user_2 = UserSchema(username)
-        user_2.insert_record()
+    username = current_user
 
-    taskname = request.form.get('taskname')
+    title = request.form.get('title')
     description = request.form.get('description')
     due_date = request.form.get('due_date')
     completed = request.form.get('completed') == 'on'
 
-    task_1 = TaskSchema(title=taskname, description=description, due_date=due_date, completed=completed)
-
-    user_2 = UserSchema.get_user('test_user')
+    task_1 = TaskSchema(title=title, description=description, due_date=due_date, completed=completed)
 
     try:
-        user_2.add_task(task_1)
+       username.add_task(task_1)
     except Exception as exc:
         raise exc
 
-    return redirect('/add_task')
+    return redirect('/list_tasks')
 
 
-@app.route("/edit_task")
-def edit_task():
-    return render_template("edit_task.html")
+@app.route("/edit_task/<task_id>", methods=['GET'])
+def edit_task(task_id):
+    username = current_user
+    task = None;
+
+    for task_a in username.get_tasks():
+        if str(task_a['_id']) == task_id:
+            task = task_a
+
+    return render_template("edit_task.html", task=task)
+
+@app.route("/edit_task/<task_id>", methods=['POST'])
+def edit_task_post(task_id):
+    username = current_user
+
+    current_tasks = username.get_tasks()
+    print("Current tasks:", current_tasks)
+
+    title = request.form.get('title')
+    description = request.form.get('description')
+    due_date = request.form.get('due_date')
+    done = request.form.get('completed') == 'on'
+
+    task = TaskSchema(title=title, description=description, due_date=due_date, completed=done)
+    task._id = ObjectId(task_id)
+    print("Attempting to update task with ID:", task_id)
+    try:
+        username.update_task(task_id, task)
+    except Exception as exc:
+         raise exc
+
+    return redirect('/list_tasks')
 
 
-@app.route("/list_tasks")
+@app.route("/list_tasks", methods=['GET'])
 @login_required
 def list_tasks():
-    return render_template("list_tasks.html")
+    username = current_user
+    tasks = username.get_tasks()
+
+    print("User:", username.username)
+    return render_template("list_tasks.html", tasks=tasks)
 
 
 @app.route("/search_task")
 def search_task():
     return render_template("search_task.html")
+
+@app.route("/delete_task/<task_id>", methods=['POST'])
+@login_required
+def delete_task(task_id):
+    user = current_user
+    try:
+        user.delete_task(task_id)
+    except Exception as exc:
+        raise exc
+    return redirect('/list_tasks')
