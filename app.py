@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 from flask_login import LoginManager, UserMixin, login_required, login_user, current_user
 from pymongo import MongoClient
 from dotenv import load_dotenv
@@ -275,3 +275,7 @@ def delete_task(task_id):
     except Exception as exc:
         raise exc
     return redirect('/list_tasks')
+
+@app.route('/static/<path:path>')
+def static_path(path):
+    return send_from_directory('static', path)
