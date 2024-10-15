@@ -19,7 +19,14 @@ Our app will aid in time management by providing a platform to organize and prio
 
 ## Steps necessary to run the software
 
-See instructions. Delete this line and place instructions to download, configure, and run the software here.
+1. Create and setup a python venv.
+2. Install requirements from `requirements.txt`. For instance, run `pip install -r requirements.txt`.
+3. Create a .env file.
+4. Populate the .env as specified in our mock `example.env`.
+    - *note for graders: our .env is in our team channel on Discord*
+5. use `flask run` to run the app
+
+NOTE: *There is a user with 'test' username and 'test' password, which can be used for demoing. It's possible to also register a new account, using our register page.*
 
 ## Task boards
 
