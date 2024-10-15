@@ -24,12 +24,12 @@
       <input type="date" id="due_date" name="due_date">
 
       <label for="completed">Completed?:</label>
-      <input type="checkbox" id="completed" name="completed">
+      <input type="checkbox" id="completed" name="completed"><br>
 
-      <button type="submit">Add Task</button>
+      <button type="submit" class="button button-add">Add Task</button><br>
     </form>
   <div class="button-container">
-    <a href="{{ url_for('index') }}" class="button">Go to Home</a>
+    <a href="{{ url_for('index') }}" class="button button-list">Go to Home</a>
   </div>
   </div>
 </div>

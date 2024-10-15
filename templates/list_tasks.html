@@ -30,7 +30,7 @@
           <td>{{ task['due_date'] or 'No due date' }}</td>
           <td>{{ 'Yes' if task['completed'] else 'No' }}</td>
           <td>
-            <a href="{{ url_for('edit_task', task_id=task['_id']) }}" class="button">Edit</a>
+            <a href="{{ url_for('edit_task', task_id=task['_id']) }}" class="button button-add">Edit</a>
             <form action="{{ url_for('delete_task', task_id=task['_id']) }}" method="POST" style="display:inline;">
               <button type="submit">Delete</button>
             </form>
@@ -41,7 +41,7 @@
     </table>
 
     <div class="button-container">
-      <a href="{{ url_for('index') }}" class="button">Go to Home</a>
+      <a href="{{ url_for('index') }}" class="button button-list">Go to Home</a>
     </div>
   </div>
 </div>

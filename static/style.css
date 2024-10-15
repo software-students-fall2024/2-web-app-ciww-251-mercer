@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #f9f8f0;
     margin: 0;
     padding: 0;
     justify-content: center;
@@ -32,30 +32,47 @@ body {
 }
 
 .navbar .button-container {
+    display: flex;
+    flex-direction: column;
     text-align: center;
+    align-items: center;
 
 }
 
 .button {
-    display: inline-block;
-    padding: 10px 20px;
+    display: block;
+    padding: 15px 0;
     background-color: #007bff;
     color: white;
     text-align: center;
     text-decoration: none;
-    margin-bottom: 9px;
-    font-size: 0.8rem;
+    margin-bottom: 25px;
+    border-radius: 25px;
+    font-size: 1.1rem;
 }
 
 .button:hover {
     background-color: #0056b3;
 }
 
+.button-add {
+    background-color: #bfaeaf;
+}
+
+.button-search {
+    background-color: #ba949e;
+}
+
+.button-list {
+    background-color: #8680ff;
+}
+
 /* Heading */
 h1 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
+    font-size: 1.9rem;
+    margin-bottom: 50px;
     color: #333;
+    text-align: center;
 }
 
 /* Form */
