@@ -12,9 +12,9 @@
 <div class="frame">
   <div class="container">
     <h1>Search Tasks</h1>
-    <form action="/search-tasks" method="GET">
+    <form action="{{ url_for('search_task_post') }}" method="POST">
       <div class="form-group">
-        <label for="searchQuery">Search by Task Name or Description:</label>
+        <label for="searchQuery">Search by Task Name:</label>
         <input type="text" id="searchQuery" name="searchQuery" placeholder="Enter..." required>
         <button type="submit" class="button button-search">Search</button>
       </div>

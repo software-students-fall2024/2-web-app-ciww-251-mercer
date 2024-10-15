@@ -262,9 +262,23 @@ def list_tasks():
     return render_template("list_tasks.html", tasks=tasks)
 
 
-@app.route("/search_task")
+@app.route("/search_task", methods=['GET'])
 def search_task():
     return render_template("search_task.html")
+
+@app.route("/search_task", methods=['POST'])
+def search_task_post():
+    searched = request.form.get('searchQuery')
+    username = current_user
+    tasks = username.get_tasks()
+
+    found = [
+        task for task in tasks
+        if searched.lower() in task['title'].lower() or searched.lower() in task['description'].lower()
+    ]
+
+    return render_template("list_tasks.html", tasks=found)
+
 
 @app.route("/delete_task/<task_id>", methods=['POST'])
 @login_required
