@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
-from flask_login import LoginManager, UserMixin, login_required, login_user, current_user
+from flask_login import LoginManager, UserMixin, login_required, login_user, current_user, logout_user
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from os import getenv
@@ -184,11 +184,20 @@ def login():
             return "Invalid password"
     return "Invalid username"
 
+@app.route('/logout')
+def logout():
+    print('hit')
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route("/")
 def home():
-    return render_template('login.html')
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    return redirect(url_for('login'))
+
 @app.route("/index")
+@login_required
 def index():
     return render_template('index.html')
 
@@ -200,6 +209,7 @@ def add_task():
 
 
 @app.route("/add_task", methods=['POST'])
+@login_required
 def add_task_post():
     username = current_user
 
@@ -219,6 +229,7 @@ def add_task_post():
 
 
 @app.route("/edit_task/<task_id>", methods=['GET'])
+@login_required
 def edit_task(task_id):
     username = current_user
     task = None;
@@ -230,6 +241,7 @@ def edit_task(task_id):
     return render_template("edit_task.html", task=task)
 
 @app.route("/edit_task/<task_id>", methods=['POST'])
+@login_required
 def edit_task_post(task_id):
     username = current_user
 
@@ -263,10 +275,12 @@ def list_tasks():
 
 
 @app.route("/search_task", methods=['GET'])
+@login_required
 def search_task():
     return render_template("search_task.html")
 
 @app.route("/search_task", methods=['POST'])
+@login_required
 def search_task_post():
     searched = request.form.get('searchQuery')
     username = current_user
