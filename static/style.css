@@ -233,3 +233,27 @@ footer {
     font-size: 0.9rem;
   }
 }
+
+@media (max-width: 480px) {
+  table th,
+  table td {
+    font-size: 0.7rem;
+    padding: 3px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .button {
+    font-size: 0.8rem;
+  }
+
+  form input[type="text"],
+  form input[type="date"],
+  form textarea,
+  form select {
+    padding: 6px;
+    font-size: 0.8rem;
+  }
+}
