@@ -8,7 +8,7 @@ Our app will aid in time management by providing a platform to organize and prio
 
 ## User stories
 
-1. As a student, I want to view all upcoming assignment deadlines so that I can prioritize my schoolwork.
+1. As a user, I want to view all upcoming tasks and when they are due.
 2. As a user, I want to be able to login and register to save the tasks that I have. 
 3. As a user, I want to be able to add any tasks that come up during the day.
 4. As a user, I want to be able to mark tasks as complete when I finish the tasks.
