@@ -29,4 +29,5 @@ NOTE: *There is a user with 'test' username and 'test' password, which can be us
 
 ## Task boards
 
-See instructions. Delete this line and place a link to the task boards here.
+[Sprint 1 Task Board](https://github.com/orgs/software-students-fall2024/projects/11/views/1)
+[Sprint 2 Task Board](https://github.com/orgs/software-students-fall2024/projects/74/views/1)
