@@ -141,8 +141,7 @@ class UserSchema(UserMixin):
 
         if update.modified_count == 0:
             raise Exception("task does not exist")
-
-
+    
 @login_manager.user_loader
 def load_user(user_id):
     user = collection.find_one({'_id': ObjectId(user_id)})
@@ -232,7 +231,7 @@ def add_task_post():
 @login_required
 def edit_task(task_id):
     username = current_user
-    task = None;
+    task = None
 
     for task_a in username.get_tasks():
         if str(task_a['_id']) == task_id:
@@ -307,3 +306,16 @@ def delete_task(task_id):
 @app.route('/static/<path:path>')
 def static_path(path):
     return send_from_directory('static', path)
+
+@app.route("/complete_task/<task_id>", methods=['POST'])
+@login_required
+def complete_task(task_id):
+    user = current_user
+    try:
+        collection.update_one(
+            {'username': user.username, 'tasks._id': str(task_id)},
+            {'$set': {'tasks.$.completed': True}}
+        )
+    except Exception as exc:
+        raise exc
+    return redirect('/list_tasks')
