@@ -15,7 +15,6 @@ Our app will aid in time management by providing a platform to organize and prio
 5. As a user, I want to be able to edit any tasks that I previously added if I need to make changes.
 6. As a user, I want to search through the tasks that I have to find a specific task and either update its status, delete it, or check if it is in my task list.
 7. As a user, I want to be able to delete any tasks that I am no longer in need of keeping track of. 
-8. As a user, I want to be able to mark a task as completed with as little clicks as possible
 
 ## Steps necessary to run the software
 
